@@ -6,10 +6,17 @@
 //  Copyright (c) 2014年 RogerChen. All rights reserved.
 //
 
-#include <iostream>
+#include <fstream>
+#include "RedBlackTree.h"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    fstream fin("/Users/rogerchen/Desktop/numbers.txt");
+    string word;
+    int count = 0;
+    RedBlackTree rbt;
+    while (fin >> word) {
+        rbt.insert(word, count++);
+    }
+
     return 0;
 }
