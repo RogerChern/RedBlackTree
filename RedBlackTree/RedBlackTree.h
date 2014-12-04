@@ -305,6 +305,7 @@ public:
     
     ~RedBlackTree() {
         cleanup(root_);
+        delete nil_;
     }
 };
 
