@@ -61,6 +61,7 @@ private:
         y -> left = x;
         x -> parent = y;
     }
+    
     void rotateRight(Node *x) {
         Node *y = x -> left;
         y -> parent = x -> parent;
@@ -80,6 +81,7 @@ private:
         y -> right = x;
         x -> parent = y;
     }
+    
     void insert(Node *n) {
         //find the position to insert
         Node *px = nil_; //trailing pointer
@@ -109,6 +111,7 @@ private:
         n -> color = Node::RED;
         insert_fix_up(n);
     }
+    
     void insert_fix_up(Node *n) {
         while (n -> parent -> color == Node::RED) {
             if (n -> parent -> parent -> left == n -> parent) {
@@ -148,6 +151,7 @@ private:
         }
         root_ -> color = Node::BLACK;
     }
+    
     void remove(Node *n) {
         Node *x; //use to trace the Node breaks rule 5
         bool y_original_color = n -> color;
@@ -183,6 +187,7 @@ private:
             remove_fix_up(x);
         }
     }
+    
     void remove_fix_up(Node *n) {
         while (n -> color != Node::RED && n != root_) {
             if (n == n -> parent -> left) {
@@ -236,6 +241,7 @@ private:
         }
         n -> color = Node::BLACK;
     }
+    
     //transplant has nothing to do with both children. It only modifies the parent pointer and parent's pointer of both nodes;
     void transplant(Node *elder, Node *newer) {
         if (elder -> parent == nil_) {
@@ -251,18 +257,21 @@ private:
         }
         newer -> parent = elder -> parent;
     }
+    
     Node *treeMin(Node *t) {
         while (t -> left != nil_) {
             t = t -> left;
         }
         return t;
     }
+    
     Node *treeMax(Node *t) {
         while (t -> right != nil_) {
             t = t -> right;
         }
         return t;
     }
+    
     Node *search(Node *t, const string &key) {
         while (t != nil_ && t -> key != key) {
             if (key > t -> key) {
@@ -274,14 +283,28 @@ private:
         }
         return t;
     }
+    
 public:
     void insert(const string &key, int value) {
         Node *n = new Node(key, value);
         insert(n);
     }
+    
     void remove(const string &key) {
         Node *n = search(root_, key);
         remove(n);
+    }
+    
+    void cleanup(Node *n) {
+        if (n != nil_) {
+            cleanup(n -> left);
+            cleanup(n -> right);
+            delete n;
+        }
+    }
+    
+    ~RedBlackTree() {
+        cleanup(root_);
     }
 };
 
