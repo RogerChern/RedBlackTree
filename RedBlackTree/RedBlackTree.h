@@ -15,16 +15,16 @@ using namespace std;
 class RedBlackTree{
 private:
     struct Node{
-        Node    *left = nullptr;
-        Node    *right = nullptr;
-        Node    *parent = nullptr;
-        string  key;
-        int     value;
-        bool    color;
+        Node *left   = nullptr;
+        Node *right  = nullptr;
+        Node *parent = nullptr;
+        int key;
+        int value;
+        bool color;
         static constexpr bool RED = true;
         static constexpr bool BLACK = false;
         
-        Node(const string &s, int v) :
+        Node(int s, int v) :
             key(s),
             value(v)
         {
@@ -40,7 +40,7 @@ private:
     Node *nil_ = new Node(Node::BLACK);
     Node *root_ = nil_;
 private:
-    void rotateLeft(Node *x) {
+    void rotateWithRight(Node *x) {
         Node *y = x -> right;
         //modify x's parent to point to y
         y -> parent = x -> parent;
@@ -62,7 +62,7 @@ private:
         x -> parent = y;
     }
     
-    void rotateRight(Node *x) {
+    void rotateWithLeft(Node *x) {
         Node *y = x -> left;
         y -> parent = x -> parent;
         if (x -> parent == nil_) {
@@ -124,11 +124,11 @@ private:
                 else {
                     if (n == n -> parent -> right) {
                         n = n -> parent;//keep the n being the right child
-                        rotateLeft(n);
+                        rotateWithRight(n);
                     }
                     n -> parent -> color = Node::BLACK;
                     n -> parent -> parent -> color = Node::RED;
-                    rotateRight(n -> parent -> parent);
+                    rotateWithLeft(n -> parent -> parent);
                 }
             }
             else {
@@ -141,11 +141,11 @@ private:
                 else {
                     if (n == n -> parent -> left) {
                         n = n -> parent;
-                        rotateRight(n);
+                        rotateWithLeft(n);
                     }
                     n -> parent -> color = Node::BLACK;
                     n -> parent -> parent -> color = Node::RED;
-                    rotateLeft(n -> parent -> parent);
+                    rotateWithRight(n -> parent -> parent);
                 }
             }
         }
@@ -156,12 +156,12 @@ private:
         Node *x; //use to trace the Node breaks rule 5
         bool y_original_color = n -> color;
         if (n -> right == nil_) {
-            x = n -> right;
+            x = n -> left;
             transplant(n, n -> left);
             delete n;
         }
         else if (n -> left == nil_) {
-            x = n -> left;
+            x = n -> right;
             transplant(n, n -> right);
             delete n;
         }
@@ -194,7 +194,7 @@ private:
                 Node *b = n -> parent -> right;//b means brother
                 if (b -> color == Node::RED) {
                     swap(b -> color, b -> parent -> color);
-                    rotateLeft(b -> parent);
+                    rotateWithRight(b -> parent);
                     b = n -> parent -> right;
                 }
                 if (b -> left -> color == Node::BLACK && b -> right -> color == Node::BLACK) {
@@ -204,13 +204,13 @@ private:
                 else {
                     if (b -> left -> color == Node::RED) {
                         swap(b -> left -> color, b -> color);
-                        rotateRight(b);
+                        rotateWithLeft(b);
                         b = n -> parent -> right;
                     }
                     b -> color = b -> parent -> color;
                     b -> parent -> color = Node::BLACK;
                     b -> right -> color = Node::BLACK;
-                    rotateLeft(b -> parent);
+                    rotateWithRight(b -> parent);
                     n = root_;
                 }
             }
@@ -218,7 +218,7 @@ private:
                 Node *b = n -> parent -> left;
                 if (b -> color == Node::RED) {
                     swap(b -> color, b -> parent -> color);
-                    rotateRight(b -> parent);
+                    rotateWithLeft(b -> parent);
                     b = n -> parent -> left;
                 }
                 if (b -> left -> color == Node::BLACK && b -> right -> color == Node::BLACK) {
@@ -228,13 +228,13 @@ private:
                 else {
                     if (b -> right -> color == Node::RED) {
                         swap(b -> right -> color, b -> color);
-                        rotateLeft(b);
+                        rotateWithRight(b);
                         b = n -> parent -> left;
                     }
                     b -> color = b -> parent -> color;
                     b -> parent -> color = Node::BLACK;
                     b -> left -> color = Node::BLACK;
-                    rotateLeft(b -> parent);
+                    rotateWithLeft(b -> parent);
                     n = root_;
                 }
             }
@@ -272,25 +272,25 @@ private:
         return t;
     }
     
-    Node *search(Node *t, const string &key) {
+    Node *search(Node *t, int key) {
         while (t != nil_ && t -> key != key) {
             if (key > t -> key) {
-                t = t -> left;
+                t = t -> right;
             }
             else {
-                t = t -> right;
+                t = t -> left;
             }
         }
         return t;
     }
     
 public:
-    void insert(const string &key, int value) {
+    void insert(int key, int value) {
         Node *n = new Node(key, value);
         insert(n);
     }
-    
-    void remove(const string &key) {
+
+    void remove(int key) {
         Node *n = search(root_, key);
         remove(n);
     }
